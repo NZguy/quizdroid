@@ -8,6 +8,8 @@ import android.widget.Button;
 
 public class MainActivity extends Activity {
 
+    public static final String QUIZ = "drma.quizIndex";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -17,28 +19,27 @@ public class MainActivity extends Activity {
         Button physicsButton = (Button) findViewById(R.id.btnPhys);
         Button marvelButton = (Button) findViewById(R.id.btnMarvel);
 
-        mathButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MathOverview.class);
-                startActivity(intent);
-            }
-        });
-
-        physicsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, PhysicsOverview.class);
-                startActivity(intent);
-            }
-        });
-
-        marvelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MarvelOverview.class);
-                startActivity(intent);
-            }
-        });
+        mathButton.setOnClickListener(new MyListener());
+        physicsButton.setOnClickListener(new MyListener());
+        marvelButton.setOnClickListener(new MyListener());
     }
+
+    public class MyListener implements View.OnClickListener{
+
+        public MyListener(){
+
+        }
+
+        @Override
+        public void onClick(View v){
+            if(v.getTag() != null){
+                int buttonTag = Integer.parseInt(v.getTag().toString());
+                Intent i = new Intent(MainActivity.this, Quiz.class);
+                i.putExtra(QUIZ, buttonTag);
+                startActivity(i);
+            }
+        }
+
+    }
+
 }

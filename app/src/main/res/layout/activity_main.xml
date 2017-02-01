@@ -15,17 +15,20 @@
         android:text="Math"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btnMath" />
+        android:id="@+id/btnMath"
+        android:tag="0" />
 
     <Button
         android:text="Physics"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btnPhys" />
+        android:id="@+id/btnPhys"
+        android:tag="1" />
 
     <Button
         android:text="Marvel Super Heros"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btnMarvel" />
+        android:id="@+id/btnMarvel"
+        android:tag="2" />
 </LinearLayout>
