@@ -4,10 +4,37 @@
     android:layout_height="match_parent"
     tools:context="edu.washington.drma.quizdroid.Answer">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent">
+
+        <Button
+            android:text="Next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/btnNext" />
+
+        <TextView
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textAnswer"
+            android:layout_marginTop="18dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textNumberCorrect"
+            android:layout_marginTop="85dp"
+            android:layout_below="@+id/textAnswer"
+            android:layout_alignLeft="@+id/textAnswer"
+            android:layout_alignStart="@+id/textAnswer" />
+
+    </RelativeLayout>
 
 </FrameLayout>

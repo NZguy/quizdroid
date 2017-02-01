@@ -1,12 +1,15 @@
 package edu.washington.drma.quizdroid;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 
 /**
@@ -20,12 +23,18 @@ import android.view.ViewGroup;
 public class Answer extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM1 = "numberCorrect";
+    private static final String ARG_PARAM2 = "currentQuestion";
+    private static final String ARG_PARAM3 = "userAnswer";
+    private static final String ARG_PARAM4 = "correctAnswer";
+    private static final String ARG_PARAM5 = "isLastQuestion";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private int numberCorrect;
+    private int currentQuestion;
+    private String userAnswer;
+    private String correctAnswer;
+    private boolean isLastQuestion;
 
     private OnFragmentInteractionListener mListener;
 
@@ -37,16 +46,19 @@ public class Answer extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param numberCorrect Parameter 1.
+     * @param currentQuestion Parameter 2.
      * @return A new instance of fragment Answer.
      */
     // TODO: Rename and change types and number of parameters
-    public static Answer newInstance(String param1, String param2) {
+    public static Answer newInstance(int numberCorrect, int currentQuestion, String userAnswer, String correctAnswer, boolean isLastQuestion) {
         Answer fragment = new Answer();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putInt(ARG_PARAM1, numberCorrect);
+        args.putInt(ARG_PARAM2, currentQuestion);
+        args.putString(ARG_PARAM3, userAnswer);
+        args.putString(ARG_PARAM4, correctAnswer);
+        args.putBoolean(ARG_PARAM5, isLastQuestion);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,8 +67,11 @@ public class Answer extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            numberCorrect = getArguments().getInt(ARG_PARAM1);
+            currentQuestion = getArguments().getInt(ARG_PARAM2);
+            userAnswer = getArguments().getString(ARG_PARAM3);
+            correctAnswer = getArguments().getString(ARG_PARAM4);
+            isLastQuestion = getArguments().getBoolean(ARG_PARAM5);
         }
     }
 
@@ -64,14 +79,37 @@ public class Answer extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_answer, container, false);
-    }
+        View view = inflater.inflate(R.layout.fragment_answer, container, false);
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+        TextView textAnswer = (TextView)view.findViewById(R.id.textAnswer);
+        TextView textNumberCorrect = (TextView)view.findViewById(R.id.textNumberCorrect);
+
+        textAnswer.setText("Your answer was \"" + userAnswer + "\", and the correct answer was \"" + correctAnswer + "\"");
+        textNumberCorrect.setText("You've gotten " + numberCorrect + "/" + currentQuestion + " correct");
+
+        Button btnNext = (Button)view.findViewById(R.id.btnNext);
+        if(isLastQuestion){
+            btnNext.setText("Finish");
+            btnNext.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mListener != null) {
+                        mListener.onFinishPressed();
+                    }
+                }
+            });
+        }else{
+            btnNext.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mListener != null) {
+                        mListener.onNextPressed();
+                    }
+                }
+            });
         }
+
+        return view;
     }
 
     @Override
@@ -103,6 +141,7 @@ public class Answer extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onNextPressed();
+        void onFinishPressed();
     }
 }
