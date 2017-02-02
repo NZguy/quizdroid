@@ -27,6 +27,7 @@ public class Quiz extends Activity
         int quizIndex = i.getIntExtra(MainActivity.QUIZ, 0);
         Fragment overview = Overview.newInstance(quizIndex);
         FragmentTransaction tx = getFragmentManager().beginTransaction();
+        tx.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
         tx.replace(R.id.fragment_placeholder, overview);
         tx.commit();
     }
@@ -36,6 +37,7 @@ public class Quiz extends Activity
         Log.i("drma.Quiz", "Begin pressed " + quizIndex);
         Fragment question = Question.newInstance();
         FragmentTransaction tx = getFragmentManager().beginTransaction();
+        tx.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
         tx.replace(R.id.fragment_placeholder, question);
         tx.commit();
 
@@ -62,6 +64,7 @@ public class Quiz extends Activity
         Log.i("drma.Quiz", "Submit pressed " + correctAnswer.equals(userAnswer));
         Fragment answer = Answer.newInstance(numberCorrect, (currentQuestion + 1), userAnswer, correctAnswer, isLastQuestion);
         FragmentTransaction tx = getFragmentManager().beginTransaction();
+        tx.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
         tx.replace(R.id.fragment_placeholder, answer);
         tx.commit();
     }
@@ -71,6 +74,7 @@ public class Quiz extends Activity
 
         Fragment question = Question.newInstance();
         FragmentTransaction tx = getFragmentManager().beginTransaction();
+        tx.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
         tx.replace(R.id.fragment_placeholder, question);
         tx.commit();
     }
