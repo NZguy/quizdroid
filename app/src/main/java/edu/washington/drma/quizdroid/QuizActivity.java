@@ -7,10 +7,10 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
 
-public class Quiz extends Activity
-        implements Overview.OnFragmentInteractionListener,
-                    Question.OnFragmentInteractionListener,
-                    Answer.OnFragmentInteractionListener  {
+public class QuizActivity extends Activity
+        implements OverviewActivity.OnFragmentInteractionListener,
+                    QuestionActivity.OnFragmentInteractionListener,
+                    AnswerActivity.OnFragmentInteractionListener  {
 
     private int[] numberOfQuestions = {5, 2, 2}; // Describes amount of questions per different quiz
     private boolean isQuestion = false; // Flag to determine if current fragment is a question or answer
@@ -25,7 +25,7 @@ public class Quiz extends Activity
         // Get the requested quiz overview
         Intent i = getIntent();
         int quizIndex = i.getIntExtra(MainActivity.QUIZ, 0);
-        Fragment overview = Overview.newInstance(quizIndex);
+        Fragment overview = OverviewActivity.newInstance(quizIndex);
         FragmentTransaction tx = getFragmentManager().beginTransaction();
         tx.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
         tx.replace(R.id.fragment_placeholder, overview);
@@ -34,8 +34,8 @@ public class Quiz extends Activity
 
     @Override
     public void onBeginPressed(int quizIndex) {
-        Log.i("drma.Quiz", "Begin pressed " + quizIndex);
-        Fragment question = Question.newInstance();
+        Log.i("drma.QuizActivity", "Begin pressed " + quizIndex);
+        Fragment question = QuestionActivity.newInstance();
         FragmentTransaction tx = getFragmentManager().beginTransaction();
         tx.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
         tx.replace(R.id.fragment_placeholder, question);
@@ -61,8 +61,8 @@ public class Quiz extends Activity
             isLastQuestion = true;
         }
 
-        Log.i("drma.Quiz", "Submit pressed " + correctAnswer.equals(userAnswer));
-        Fragment answer = Answer.newInstance(numberCorrect, (currentQuestion + 1), userAnswer, correctAnswer, isLastQuestion);
+        Log.i("drma.QuizActivity", "Submit pressed " + correctAnswer.equals(userAnswer));
+        Fragment answer = AnswerActivity.newInstance(numberCorrect, (currentQuestion + 1), userAnswer, correctAnswer, isLastQuestion);
         FragmentTransaction tx = getFragmentManager().beginTransaction();
         tx.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
         tx.replace(R.id.fragment_placeholder, answer);
@@ -72,7 +72,7 @@ public class Quiz extends Activity
     public void onNextPressed(){
         currentQuestion++;
 
-        Fragment question = Question.newInstance();
+        Fragment question = QuestionActivity.newInstance();
         FragmentTransaction tx = getFragmentManager().beginTransaction();
         tx.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
         tx.replace(R.id.fragment_placeholder, question);
@@ -80,7 +80,7 @@ public class Quiz extends Activity
     }
 
     public void onFinishPressed(){
-        Intent i = new Intent(Quiz.this, MainActivity.class);
+        Intent i = new Intent(QuizActivity.this, MainActivity.class);
         startActivity(i);
     }
 }

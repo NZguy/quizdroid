@@ -1,8 +1,6 @@
 package edu.washington.drma.quizdroid;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,12 +13,12 @@ import android.widget.TextView;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link Answer.OnFragmentInteractionListener} interface
+ * {@link AnswerActivity.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link Answer#newInstance} factory method to
+ * Use the {@link AnswerActivity#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Answer extends Fragment {
+public class AnswerActivity extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "numberCorrect";
@@ -38,7 +36,7 @@ public class Answer extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public Answer() {
+    public AnswerActivity() {
         // Required empty public constructor
     }
 
@@ -48,11 +46,11 @@ public class Answer extends Fragment {
      *
      * @param numberCorrect Parameter 1.
      * @param currentQuestion Parameter 2.
-     * @return A new instance of fragment Answer.
+     * @return A new instance of fragment AnswerActivity.
      */
     // TODO: Rename and change types and number of parameters
-    public static Answer newInstance(int numberCorrect, int currentQuestion, String userAnswer, String correctAnswer, boolean isLastQuestion) {
-        Answer fragment = new Answer();
+    public static AnswerActivity newInstance(int numberCorrect, int currentQuestion, String userAnswer, String correctAnswer, boolean isLastQuestion) {
+        AnswerActivity fragment = new AnswerActivity();
         Bundle args = new Bundle();
         args.putInt(ARG_PARAM1, numberCorrect);
         args.putInt(ARG_PARAM2, currentQuestion);

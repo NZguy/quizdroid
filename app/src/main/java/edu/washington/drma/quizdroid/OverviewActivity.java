@@ -1,7 +1,6 @@
 package edu.washington.drma.quizdroid;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,12 +13,12 @@ import android.widget.TextView;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link Overview.OnFragmentInteractionListener} interface
+ * {@link OverviewActivity.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link Overview#newInstance} factory method to
+ * Use the {@link OverviewActivity#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Overview extends Fragment {
+public class OverviewActivity extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_QUIX_INDEX = "drma.quizIndex";
@@ -35,7 +34,7 @@ public class Overview extends Fragment {
             {"Marvel", "2"}
     };
 
-    public Overview() {
+    public OverviewActivity() {
         // Required empty public constructor
     }
 
@@ -44,11 +43,11 @@ public class Overview extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param quizIndex Parameter 1.
-     * @return A new instance of fragment Overview.
+     * @return A new instance of fragment OverviewActivity.
      */
     // TODO: Rename and change types and number of parameters
-    public static Overview newInstance(int quizIndex) {
-        Overview fragment = new Overview();
+    public static OverviewActivity newInstance(int quizIndex) {
+        OverviewActivity fragment = new OverviewActivity();
         Bundle args = new Bundle();
         args.putInt(ARG_QUIX_INDEX, quizIndex);
         fragment.setArguments(args);
@@ -75,7 +74,7 @@ public class Overview extends Fragment {
         TextView textDescr = (TextView)view.findViewById(R.id.textDescr);
         TextView textQuestions = (TextView)view.findViewById(R.id.textQuestions);
 
-        textTitle.setText(currentQuiz[0] + " Overview");
+        textTitle.setText(currentQuiz[0] + " OverviewActivity");
         textDescr.setText("This quiz contains many questions about " + currentQuiz[0]);
         textQuestions.setText(currentQuiz[1] + " questions");
 
@@ -92,6 +91,8 @@ public class Overview extends Fragment {
         return view;
     }
 
+    // onAttach used activities rather than contexts prior to api 23
+    // http://stackoverflow.com/questions/32604552/onattach-not-called-in-fragment
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
