@@ -1,5 +1,7 @@
 package edu.washington.drma.quizdroid;
 
+import android.graphics.drawable.Drawable;
+
 import java.util.ArrayList;
 
 /**
@@ -12,16 +14,22 @@ public class Topic {
     private String descShort;
     private String descLong;
     private ArrayList<Question> questionList;
+    private int iconName;
 
-    public Topic(String title, String descShort, String descLong){
+    public Topic(String title, String descShort, String descLong, int iconName){
         questionList = new ArrayList<Question>();
         this.title = title;
         this.descShort = descShort;
         this.descLong = descLong;
+        this.iconName = iconName;
     }
 
     public void addQuestion(Question q){
         questionList.add(q);
+    }
+
+    public int getNumOfQuestions(){
+        return questionList.size();
     }
 
     public Question getQuestion(int questionNumber){
@@ -38,6 +46,10 @@ public class Topic {
 
     public String getDescLong(){
         return this.descShort;
+    }
+
+    public int getIconName(){
+        return this.iconName;
     }
 
     public int countCorrect(){

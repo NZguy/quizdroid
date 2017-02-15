@@ -7,31 +7,35 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link QuestionActivity.OnFragmentInteractionListener} interface
+ * {@link QuestionFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link QuestionActivity#newInstance} factory method to
+ * Use the {@link QuestionFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class QuestionActivity extends Fragment {
+public class QuestionFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    //private static final String ARG_PARAM1 = "isLastQuestion";
+    private static final String ARG_PARAM1 = "topicIndex";
+    private static final String ARG_PARAM2 = "questionIndex";
 
     // TODO: Rename and change types of parameters
-    //private boolean isLastQuestion;
+    private int topicIndex;
+    private int questionIndex;
 
     private OnFragmentInteractionListener mListener;
-    String userAnswer;
-    final String correctAnswer = "RadioButton3";
+    int userAnswer;
     Button btnSubmit;
 
-    public QuestionActivity() {
+    public QuestionFragment() {
         // Required empty public constructor
     }
 
@@ -40,13 +44,14 @@ public class QuestionActivity extends Fragment {
      * this fragment using the provided parameters.
      *
      *
-     * @return A new instance of fragment QuestionActivity.
+     * @return A new instance of fragment QuestionFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static QuestionActivity newInstance() {
-        QuestionActivity fragment = new QuestionActivity();
+    public static QuestionFragment newInstance(int topicIndex, int questionIndex) {
+        QuestionFragment fragment = new QuestionFragment();
         Bundle args = new Bundle();
-        //args.putBoolean(ARG_PARAM1, isLastQuestion);
+        args.putInt(ARG_PARAM1, topicIndex);
+        args.putInt(ARG_PARAM2, questionIndex);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,33 +60,49 @@ public class QuestionActivity extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            //isLastQuestion = getArguments().getBoolean(ARG_PARAM1);
+            topicIndex = getArguments().getInt(ARG_PARAM1);
+            questionIndex = getArguments().getInt(ARG_PARAM2);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        QuizApp app = (QuizApp)getActivity().getApplication();
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question, container, false);
 
-        // How can I make a listener that listens to all buttons in a fragment?
-        RadioButton radioButton1 = (RadioButton)view.findViewById(R.id.radioButton1);
-        RadioButton radioButton2 = (RadioButton)view.findViewById(R.id.radioButton2);
-        RadioButton radioButton3 = (RadioButton)view.findViewById(R.id.radioButton3);
-        RadioButton radioButton4 = (RadioButton)view.findViewById(R.id.radioButton4);
+        // Set question text
+        TextView qText = (TextView)view.findViewById(R.id.questionText);
+        qText.setText(app.getRepository().getQuestionText(topicIndex, questionIndex));
 
-        radioButton1.setOnClickListener(new RadioListener());
-        radioButton2.setOnClickListener(new RadioListener());
-        radioButton3.setOnClickListener(new RadioListener());
-        radioButton4.setOnClickListener(new RadioListener());
+        // Populate list of radio buttons
+        RadioGroup rGroup = (RadioGroup)view.findViewById(R.id.radioGroup);
+        LinearLayout.LayoutParams radioLayout = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
 
+        String[] questionAnswers = app.getRepository().getQuestionAnswers(topicIndex, questionIndex);
+        for(int i = 0; i < questionAnswers.length; i++){
+            RadioButton rButton = new RadioButton(getActivity());
+            rButton.setLayoutParams(radioLayout);
+            rButton.setTag(i);
+            rButton.setText(questionAnswers[i]);
+            rButton.setOnClickListener(new RadioListener());
+            rGroup.addView(rButton);
+        }
+
+        // Create listener for submit button
         btnSubmit = (Button) view.findViewById(R.id.btnSumbit);
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mListener != null) {
-                    mListener.onSubmitPressed(userAnswer, correctAnswer);
+                    QuizApp app = (QuizApp)getActivity().getApplication();
+                    app.getRepository().setQuestionUserAnswer(topicIndex, questionIndex, userAnswer);
+                    mListener.onSubmitPressed();
                 }
             }
         });
@@ -120,7 +141,7 @@ public class QuestionActivity extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onSubmitPressed(String userAnswer, String correctAnswer);
+        void onSubmitPressed();
     }
 
     public class RadioListener implements View.OnClickListener{
@@ -131,7 +152,8 @@ public class QuestionActivity extends Fragment {
 
         public void onClick(View v){
             // Is the button now checked?
-            userAnswer = ((RadioButton) v).getText().toString();
+            //userAnswer = ((RadioButton) v).getText().toString();
+            userAnswer = Integer.parseInt(v.getTag().toString());
             btnSubmit.setVisibility(View.VISIBLE);
         }
 

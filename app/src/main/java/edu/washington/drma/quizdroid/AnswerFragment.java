@@ -13,30 +13,26 @@ import android.widget.TextView;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link AnswerActivity.OnFragmentInteractionListener} interface
+ * {@link AnswerFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link AnswerActivity#newInstance} factory method to
+ * Use the {@link AnswerFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AnswerActivity extends Fragment {
+public class AnswerFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "numberCorrect";
-    private static final String ARG_PARAM2 = "currentQuestion";
-    private static final String ARG_PARAM3 = "userAnswer";
-    private static final String ARG_PARAM4 = "correctAnswer";
-    private static final String ARG_PARAM5 = "isLastQuestion";
+    private static final String ARG_PARAM1 = "topicIndex";
+    private static final String ARG_PARAM2 = "questionIndex";
+    private static final String ARG_PARAM3 = "isLastQuestion";
 
     // TODO: Rename and change types of parameters
-    private int numberCorrect;
-    private int currentQuestion;
-    private String userAnswer;
-    private String correctAnswer;
+    private int topicIndex;
+    private int questionIndex;
     private boolean isLastQuestion;
 
     private OnFragmentInteractionListener mListener;
 
-    public AnswerActivity() {
+    public AnswerFragment() {
         // Required empty public constructor
     }
 
@@ -46,17 +42,15 @@ public class AnswerActivity extends Fragment {
      *
      * @param numberCorrect Parameter 1.
      * @param currentQuestion Parameter 2.
-     * @return A new instance of fragment AnswerActivity.
+     * @return A new instance of fragment AnswerFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static AnswerActivity newInstance(int numberCorrect, int currentQuestion, String userAnswer, String correctAnswer, boolean isLastQuestion) {
-        AnswerActivity fragment = new AnswerActivity();
+    public static AnswerFragment newInstance(int topicIndex, int questionIndex, boolean isLastQuestion) {
+        AnswerFragment fragment = new AnswerFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_PARAM1, numberCorrect);
-        args.putInt(ARG_PARAM2, currentQuestion);
-        args.putString(ARG_PARAM3, userAnswer);
-        args.putString(ARG_PARAM4, correctAnswer);
-        args.putBoolean(ARG_PARAM5, isLastQuestion);
+        args.putInt(ARG_PARAM1, topicIndex);
+        args.putInt(ARG_PARAM2, questionIndex);
+        args.putBoolean(ARG_PARAM3, isLastQuestion);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,17 +59,22 @@ public class AnswerActivity extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            numberCorrect = getArguments().getInt(ARG_PARAM1);
-            currentQuestion = getArguments().getInt(ARG_PARAM2);
-            userAnswer = getArguments().getString(ARG_PARAM3);
-            correctAnswer = getArguments().getString(ARG_PARAM4);
-            isLastQuestion = getArguments().getBoolean(ARG_PARAM5);
+            topicIndex = getArguments().getInt(ARG_PARAM1);
+            questionIndex = getArguments().getInt(ARG_PARAM2);
+            isLastQuestion = getArguments().getBoolean(ARG_PARAM3);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        QuizApp app = (QuizApp)getActivity().getApplication();
+
+        String correctAnswer = app.getRepository().getQuestionCorrectAnswer(topicIndex, questionIndex);
+        String userAnswer = app.getRepository().getQuestionUserAnswer(topicIndex, questionIndex);
+        int numberCorrect = app.getRepository().countCorrectAnswers(topicIndex);
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_answer, container, false);
 
@@ -83,7 +82,7 @@ public class AnswerActivity extends Fragment {
         TextView textNumberCorrect = (TextView)view.findViewById(R.id.textNumberCorrect);
 
         textAnswer.setText("Your answer was \"" + userAnswer + "\", and the correct answer was \"" + correctAnswer + "\"");
-        textNumberCorrect.setText("You've gotten " + numberCorrect + "/" + currentQuestion + " correct");
+        textNumberCorrect.setText("You've gotten " + numberCorrect + "/" + questionIndex + " correct");
 
         Button btnNext = (Button)view.findViewById(R.id.btnNext);
         if(isLastQuestion){

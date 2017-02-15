@@ -2,11 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="edu.washington.drma.quizdroid.QuestionActivity">
+    tools:context="edu.washington.drma.quizdroid.QuestionFragment">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <TextView
             android:text="Question"
@@ -15,51 +16,13 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:id="@+id/textView"
+            android:id="@+id/questionText"
             android:onClick="onRadioClick"/>
         <RadioGroup
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <RadioButton
-                android:text="RadioButton1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/radioButton1"
-                android:layout_marginTop="55dp"
-                android:layout_below="@+id/textView"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:onClick="onRadioClick"/>
+            android:layout_height="wrap_content"
+            android:id="@+id/radioGroup">
 
-            <RadioButton
-                android:text="RadioButton2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/radioButton"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:id="@+id/radioButton2"
-                android:onClick="onRadioClick"/>
-
-            <RadioButton
-                android:text="RadioButton3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/radioButton2"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:id="@+id/radioButton3"
-                android:onClick="onRadioClick"/>
-
-            <RadioButton
-                android:text="RadioButton4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/radioButton3"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:id="@+id/radioButton4"
-                android:onClick="onRadioClick"/>
         </RadioGroup>
 
         <Button
@@ -71,6 +34,6 @@
             android:id="@+id/btnSumbit"
             android:visibility="invisible"/>
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </FrameLayout>

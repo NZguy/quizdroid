@@ -8,14 +8,15 @@ import android.app.Fragment;
 import android.util.Log;
 
 public class QuizActivity extends Activity
-        implements OverviewActivity.OnFragmentInteractionListener,
-                    QuestionActivity.OnFragmentInteractionListener,
-                    AnswerActivity.OnFragmentInteractionListener  {
+        implements OverviewFragment.OnFragmentInteractionListener,
+                    QuestionFragment.OnFragmentInteractionListener,
+                    AnswerFragment.OnFragmentInteractionListener  {
 
-    private int[] numberOfQuestions = {5, 2, 2}; // Describes amount of questions per different quiz
+    //private int[] numberOfQuestions = {5, 2, 2}; // Describes amount of questions per different quiz
     private boolean isQuestion = false; // Flag to determine if current fragment is a question or answer
-    private int currentQuestion = 0; // The current question we are on
-    private int[] correctArray; // Tracks which questions the user got right
+    private int topicIndex;
+    private int questionIndex = 0; // The current question we are on
+    //private int[] correctArray; // Tracks which questions the user got right
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +25,8 @@ public class QuizActivity extends Activity
 
         // Get the requested quiz overview
         Intent i = getIntent();
-        int quizIndex = i.getIntExtra(MainActivity.QUIZ, 0);
-        Fragment overview = OverviewActivity.newInstance(quizIndex);
+        topicIndex = i.getIntExtra(MainActivity.QUIZ, 0);
+        Fragment overview = OverviewFragment.newInstance(topicIndex);
         FragmentTransaction tx = getFragmentManager().beginTransaction();
         tx.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
         tx.replace(R.id.fragment_placeholder, overview);
@@ -33,36 +34,26 @@ public class QuizActivity extends Activity
     }
 
     @Override
-    public void onBeginPressed(int quizIndex) {
-        Log.i("drma.QuizActivity", "Begin pressed " + quizIndex);
-        Fragment question = QuestionActivity.newInstance();
+    public void onBeginPressed(int topicIndex) {
+        Log.i("drma.QuizActivity", "Begin pressed " + topicIndex);
+        Fragment question = QuestionFragment.newInstance(topicIndex, questionIndex);
         FragmentTransaction tx = getFragmentManager().beginTransaction();
         tx.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
         tx.replace(R.id.fragment_placeholder, question);
         tx.commit();
-
-        correctArray = new int[numberOfQuestions[quizIndex]];
     }
 
-    public void onSubmitPressed(String userAnswer, String correctAnswer){
-        if (correctAnswer.equals(userAnswer)) {
-            correctArray[currentQuestion] = 1;
-        } else {
-            correctArray[currentQuestion] = 0;
-        }
+    public void onSubmitPressed(){
+//        int numberCorrect = app.getRepository().countCorrectAnswers(topicIndex);
 
-        int numberCorrect = 0;
-        for(int i = 0; i < correctArray.length; i++){
-            numberCorrect += correctArray[i];
-        }
-
+        QuizApp app = (QuizApp)this.getApplication();
         boolean isLastQuestion = false;
-        if((currentQuestion + 1) == correctArray.length){
+        if((questionIndex + 1) == app.getRepository().getNumOfQuestions(topicIndex)){
             isLastQuestion = true;
         }
 
-        Log.i("drma.QuizActivity", "Submit pressed " + correctAnswer.equals(userAnswer));
-        Fragment answer = AnswerActivity.newInstance(numberCorrect, (currentQuestion + 1), userAnswer, correctAnswer, isLastQuestion);
+        Log.i("drma.QuizActivity", "Submit pressed " + app.getRepository().isQuestionCorrect(topicIndex, questionIndex));
+        Fragment answer = AnswerFragment.newInstance(topicIndex, questionIndex, isLastQuestion);
         FragmentTransaction tx = getFragmentManager().beginTransaction();
         tx.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
         tx.replace(R.id.fragment_placeholder, answer);
@@ -70,9 +61,9 @@ public class QuizActivity extends Activity
     }
 
     public void onNextPressed(){
-        currentQuestion++;
+        questionIndex++;
 
-        Fragment question = QuestionActivity.newInstance();
+        Fragment question = QuestionFragment.newInstance(topicIndex, questionIndex);
         FragmentTransaction tx = getFragmentManager().beginTransaction();
         tx.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
         tx.replace(R.id.fragment_placeholder, question);

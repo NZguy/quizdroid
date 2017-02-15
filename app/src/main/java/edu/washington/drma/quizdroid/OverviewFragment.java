@@ -13,28 +13,28 @@ import android.widget.TextView;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link OverviewActivity.OnFragmentInteractionListener} interface
+ * {@link OverviewFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link OverviewActivity#newInstance} factory method to
+ * Use the {@link OverviewFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class OverviewActivity extends Fragment {
+public class OverviewFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_QUIX_INDEX = "drma.quizIndex";
+    private static final String ARG_TOPIC_INDEX = "drma.topicIndex";
 
-    private int quizIndex;
+    private int topicIndex;
 
     private OnFragmentInteractionListener mListener;
 
     // Data
-    String[][] quizOverviewData = new String[][]{
-            {"Math", "5"},
-            {"Physics", "2"},
-            {"Marvel", "2"}
-    };
+//    String[][] quizOverviewData = new String[][]{
+//            {"Math", "5"},
+//            {"Physics", "2"},
+//            {"Marvel", "2"}
+//    };
 
-    public OverviewActivity() {
+    public OverviewFragment() {
         // Required empty public constructor
     }
 
@@ -42,14 +42,14 @@ public class OverviewActivity extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param quizIndex Parameter 1.
-     * @return A new instance of fragment OverviewActivity.
+     * @param topicIndex Parameter 1.
+     * @return A new instance of fragment OverviewFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static OverviewActivity newInstance(int quizIndex) {
-        OverviewActivity fragment = new OverviewActivity();
+    public static OverviewFragment newInstance(int topicIndex) {
+        OverviewFragment fragment = new OverviewFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_QUIX_INDEX, quizIndex);
+        args.putInt(ARG_TOPIC_INDEX, topicIndex);
         fragment.setArguments(args);
         return fragment;
     }
@@ -58,32 +58,35 @@ public class OverviewActivity extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            quizIndex = getArguments().getInt(ARG_QUIX_INDEX);
+            topicIndex = getArguments().getInt(ARG_TOPIC_INDEX);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        QuizApp app = (QuizApp)getActivity().getApplication();
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_overview, container, false);
 
-        String[] currentQuiz = quizOverviewData[quizIndex];
+        //String[] currentQuiz = quizOverviewData[topicIndex];
 
         TextView textTitle = (TextView)view.findViewById(R.id.textTitle);
         TextView textDescr = (TextView)view.findViewById(R.id.textDescr);
         TextView textQuestions = (TextView)view.findViewById(R.id.textQuestions);
 
-        textTitle.setText(currentQuiz[0] + " OverviewActivity");
-        textDescr.setText("This quiz contains many questions about " + currentQuiz[0]);
-        textQuestions.setText(currentQuiz[1] + " questions");
+        textTitle.setText(app.getRepository().getTopicTitle(topicIndex));
+        textDescr.setText(app.getRepository().getTopicDescShort(topicIndex));
+        textQuestions.setText(app.getRepository().getNumOfQuestions(topicIndex) + " questions");
 
         Button btnBegin = (Button)view.findViewById(R.id.btnBegin);
         btnBegin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mListener != null) {
-                    mListener.onBeginPressed(quizIndex);
+                    mListener.onBeginPressed(topicIndex);
                 }
             }
         });
