@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.provider.ContactsContract;
 import android.util.Log;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 
 public class QuizApp extends Application {
 
-    private DataRepository instance = new DataRepository(this);
+    private DataRepository instance;
 
     @Override
     public void onCreate() {
@@ -22,9 +23,14 @@ public class QuizApp extends Application {
 
         Log.i("QuizApp", "Application Created");
         Log.i("QuizApp", this.getFilesDir().getAbsolutePath());
+
+        String filePath = getApplicationContext().getFilesDir() + "/questions.json";
+        File questionsFile = new File(filePath);
+        instance = new DataRepository(questionsFile);
+
         // /data/user/0/edu.washington.drma.quizdroid/files
         // Can't adb push to my device, no permission to
-        //Log.i("QuizApp", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath());
+        // Log.i("QuizApp", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath());
     }
 
     public DataRepository getRepository(){
