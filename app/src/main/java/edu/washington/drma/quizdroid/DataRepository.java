@@ -1,5 +1,8 @@
 package edu.washington.drma.quizdroid;
 
+import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -10,10 +13,17 @@ import java.util.ArrayList;
 
 public class DataRepository{
 
-    ArrayList<Topic> topics;
+    private ArrayList<Topic> topics;
+    private Context context;
 
-    public DataRepository(){
+    public DataRepository(Context context){
+        this.context = context;
         this.initializeData();
+        // How do I get access to context in a non activity class without app crashing, for some
+        // reason context is null
+
+        Log.i("DataRepository", "DataRepo loaded");
+        Log.i("DataRepository", context.getFilesDir().getAbsolutePath());
     }
 
     public void initializeData() {
