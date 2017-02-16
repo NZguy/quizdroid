@@ -108,10 +108,6 @@ public class DataRepository{
         return ret;
     }
 
-    public int getNumOfTopics(){
-        return topics.size();
-    }
-
     public String[] getTopicTitles(){
         String[] topicNames = new String[topics.size()];
         for(int i = 0; i < topics.size(); i++){
