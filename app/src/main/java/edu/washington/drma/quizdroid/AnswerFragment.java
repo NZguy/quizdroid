@@ -82,7 +82,7 @@ public class AnswerFragment extends Fragment {
         TextView textNumberCorrect = (TextView)view.findViewById(R.id.textNumberCorrect);
 
         textAnswer.setText("Your answer was \"" + userAnswer + "\", and the correct answer was \"" + correctAnswer + "\"");
-        textNumberCorrect.setText("You've gotten " + numberCorrect + "/" + questionIndex + " correct");
+        textNumberCorrect.setText("You've gotten " + numberCorrect + "/" + (questionIndex + 1) + " correct");
 
         Button btnNext = (Button)view.findViewById(R.id.btnNext);
         if(isLastQuestion){

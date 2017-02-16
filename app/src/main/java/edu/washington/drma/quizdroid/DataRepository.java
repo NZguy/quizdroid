@@ -75,7 +75,7 @@ public class DataRepository{
                     }
                     topics.get(i).addQuestion(new Question(jQuestion.getString("text"),
                             stringAnswers,
-                            jQuestion.getInt("answer")));
+                            (jQuestion.getInt("answer") - 1)));
                 }
             }
         } catch (JSONException e) {
