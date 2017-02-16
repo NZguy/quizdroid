@@ -56,7 +56,7 @@ public class DataRepository{
         Log.i("DataRepository", "JSON");
         Log.i("DataRepository", questionsJSON);
 
-
+        // Source: http://stackoverflow.com/questions/2591098/how-to-parse-json-in-java
         try {
             JSONArray jTopics = new JSONArray(questionsJSON);
             for(int i = 0; i < jTopics.length(); i++){

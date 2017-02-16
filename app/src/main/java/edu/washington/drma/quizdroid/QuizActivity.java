@@ -1,13 +1,17 @@
 package edu.washington.drma.quizdroid;
 
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
-public class QuizActivity extends Activity
+public class QuizActivity extends AppCompatActivity
         implements OverviewFragment.OnFragmentInteractionListener,
                     QuestionFragment.OnFragmentInteractionListener,
                     AnswerFragment.OnFragmentInteractionListener  {
@@ -23,6 +27,10 @@ public class QuizActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
 
+        // Toolbar
+        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         // Get the requested quiz overview
         Intent i = getIntent();
         topicIndex = i.getIntExtra(MainActivity.QUIZ, 0);
@@ -31,6 +39,37 @@ public class QuizActivity extends Activity
         tx.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
         tx.replace(R.id.fragment_placeholder, overview);
         tx.commit();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent i;
+        switch (item.getItemId()) {
+            case R.id.action_main:
+                // User chose the "Settings" item, show the app settings UI...
+                i = new Intent(QuizActivity.this, MainActivity.class);
+                startActivity(i);
+                return true;
+
+            case R.id.action_preferences:
+                // User chose the "Favorite" action, mark the current item
+                // as a favorite...
+                i = new Intent(QuizActivity.this, PreferencesActivity.class);
+                startActivity(i);
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
