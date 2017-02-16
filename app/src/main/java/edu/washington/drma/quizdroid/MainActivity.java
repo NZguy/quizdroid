@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.main_menu, menu);
         return true;
     }
 
@@ -58,12 +58,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent i;
         switch (item.getItemId()) {
-            case R.id.action_main:
-                // User chose the "Settings" item, show the app settings UI...
-                i = new Intent(MainActivity.this, MainActivity.class);
-                startActivity(i);
-                return true;
-
             case R.id.action_preferences:
                 // User chose the "Favorite" action, mark the current item
                 // as a favorite...

@@ -4,6 +4,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -31,6 +32,10 @@ public class QuizActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Up button
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+
         // Get the requested quiz overview
         Intent i = getIntent();
         topicIndex = i.getIntExtra(MainActivity.QUIZ, 0);
@@ -44,7 +49,7 @@ public class QuizActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.main_menu, menu);
         return true;
     }
 
@@ -52,12 +57,6 @@ public class QuizActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent i;
         switch (item.getItemId()) {
-            case R.id.action_main:
-                // User chose the "Settings" item, show the app settings UI...
-                i = new Intent(QuizActivity.this, MainActivity.class);
-                startActivity(i);
-                return true;
-
             case R.id.action_preferences:
                 // User chose the "Favorite" action, mark the current item
                 // as a favorite...
