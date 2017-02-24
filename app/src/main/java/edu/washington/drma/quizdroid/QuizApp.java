@@ -45,7 +45,8 @@ public class QuizApp extends Application {
         Intent intent = new Intent(this, DownloadService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
-        defaultDownloadURL = "default URL";
+        defaultDownloadURL = "http://tednewardsandbox.site44.com/questions.json";
+        String anotherURL = "https://raw.github.com/square/okhttp/master/README.md";
     }
 
     public DataRepository getRepository(){
