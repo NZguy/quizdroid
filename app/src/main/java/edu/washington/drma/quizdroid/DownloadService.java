@@ -7,6 +7,12 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
+import java.io.IOException;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class DownloadService extends Service {
 
     private final IBinder binder = new LocalBinder();
@@ -14,6 +20,7 @@ public class DownloadService extends Service {
     private String downloadURL;
     private Handler handler;
     private DownloadFile runDownload;
+    private OkHttpClient client;
 
     public DownloadService() {
     }
@@ -28,6 +35,8 @@ public class DownloadService extends Service {
     public void onCreate(){
         super.onCreate();
         handler = new Handler();
+
+        client = new OkHttpClient();
     }
 
     public class LocalBinder extends Binder {
@@ -50,6 +59,27 @@ public class DownloadService extends Service {
 
     private void attemptDownload(){
         Log.d(TAG, "Download URL is: " + downloadURL);
+
+
+        String data = "";
+        try {
+            Request request = new Request.Builder()
+                    .url(downloadURL)
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            data = response.body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Tell the user about this
+        } catch (IllegalArgumentException e){
+            e.printStackTrace();
+            // Tell the user about this
+        }
+
+        if(data != null){
+            Log.d(TAG, "Response: " + data);
+        }
     }
 
     // This is so much easier than an alarm manager lol
