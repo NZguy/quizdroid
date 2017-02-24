@@ -25,15 +25,20 @@
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
+                android:value=".MainActivity" />
         </activity>
         <activity
             android:name=".PreferencesActivity"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
+                android:value=".MainActivity" />
         </activity>
+
+        <service
+            android:name=".DownloadService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

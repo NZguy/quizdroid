@@ -33,6 +33,8 @@ public class DataRepository{
         /*
         How do I get access to context in a non activity class without app crashing? For some
         reason context is null.
+        - This happened becuase the activity was passed before it was finished initializing, pass it
+        through in onCreate
 
         Whats the best way to handle all the try/catch segments in this code?
          */

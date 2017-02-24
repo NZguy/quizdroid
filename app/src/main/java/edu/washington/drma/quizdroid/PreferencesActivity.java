@@ -8,8 +8,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 public class PreferencesActivity extends AppCompatActivity {
+
+    QuizApp app;
+    EditText editURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +29,18 @@ public class PreferencesActivity extends AppCompatActivity {
         // Up button
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
+
+        app = (QuizApp)this.getApplication();
+
+        editURL = (EditText) findViewById(R.id.editURL);
+        Button btnSubmit = (Button) findViewById(R.id.btnSubmit);
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = editURL.getText().toString();
+                app.setDownloadURL(url);
+            }
+        });
     }
 
     @Override

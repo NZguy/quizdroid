@@ -1,10 +1,17 @@
 package edu.washington.drma.quizdroid;
 
+import android.app.AlertDialog;
 import android.app.Application;
+import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Environment;
+import android.os.IBinder;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.WindowManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,6 +23,9 @@ import java.util.ArrayList;
 public class QuizApp extends Application {
 
     private DataRepository instance;
+    DownloadService downloadService;
+    private boolean serviceBound = false;
+    private String defaultDownloadURL;
 
     @Override
     public void onCreate() {
@@ -31,10 +41,35 @@ public class QuizApp extends Application {
         // /data/user/0/edu.washington.drma.quizdroid/files
         // Can't adb push to my device, no permission to
         // Log.i("QuizApp", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath());
+
+        Intent intent = new Intent(this, DownloadService.class);
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+
+        defaultDownloadURL = "default URL";
     }
 
     public DataRepository getRepository(){
         return instance;
     }
+
+    public void setDownloadURL(String downloadURL){
+        downloadService.setDownloadURL(downloadURL);
+    }
+
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            // There has to be a way to shorten this o.o
+            DownloadService.LocalBinder binder = (DownloadService.LocalBinder) service;
+            downloadService = binder.getService();
+            serviceBound = true;
+            downloadService.setDownloadURL(defaultDownloadURL);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            serviceBound = false;
+        }
+    };
 
 }
