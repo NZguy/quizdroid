@@ -4,10 +4,12 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 
 import java.io.IOException;
@@ -43,7 +45,25 @@ public class DownloadService extends Service {
         // Handler to run thread
         handlerThread = new HandlerThread("MyHandlerThread");
         handlerThread.start();
-        handler = new Handler(handlerThread.getLooper());
+        handler = new Handler(handlerThread.getLooper()){
+
+            @Override
+            public void handleMessage(Message msg){
+                Bundle bundle = msg.getData();
+                String messageType = bundle.getString("messageType");
+                if(messageType.compareTo("SUCCESS") == 0){
+                    // Success, send a notification
+                    Log.d(TAG, "Download Succeded");
+                }else if(messageType.compareTo("ERROR_BAD_URL") == 0){
+                    // Failure, send an orderedbroadcast
+                    Log.d(TAG, "Download Failed, bad url");
+                }else if(messageType.compareTo("ERROR_DOWNLOAD_FAIL") == 0){
+                    // Failure, send an orderedbroadcast
+                    Log.d(TAG, "Download Failed");
+                }
+
+            }
+        };
 
         // Client to get download
         client = new OkHttpClient();
@@ -67,7 +87,7 @@ public class DownloadService extends Service {
 
         // Stops previous running of downloads and starts them again with the newest URL
         if(runDownload == null){
-            runDownload = new DownloadFileRunnable();
+            runDownload = new DownloadFileRunnable(handler);
         }
         handler.removeCallbacks(runDownload);
         handler.post(runDownload);
@@ -82,15 +102,12 @@ public class DownloadService extends Service {
 
         Handler myHandler;
 
-        DownloadFileRunnable(){
-            myHandler = new Handler(Looper.getMainLooper());
+        DownloadFileRunnable(Handler h){
+            myHandler = h;
         }
 
         @Override
         public void run(){
-
-
-
             Log.d(TAG, "Download URL is: " + downloadURL);
             String data = "";
             try {
@@ -103,23 +120,34 @@ public class DownloadService extends Service {
             } catch (IOException e) {
                 e.printStackTrace();
                 // Tell the user that the download failed
+                sendCaseMessage("ERROR_DOWNLOAD_FAIL");
+                myHandler.removeCallbacks(runDownload);
             } catch (IllegalArgumentException e){
                 e.printStackTrace();
                 // Tell the user that this is an invalid url
+                sendCaseMessage("ERROR_BAD_URL");
+                myHandler.removeCallbacks(runDownload);
             }
 
             if(data != null){
                 // If we get here that means the data is good, an error would have thrown with a failed download
-                Log.d(TAG, "Response: " + data);
+                Log.d(TAG, "Response got ");
                 // Save the data to the file
 
 
                 // Tell the app that we have finished
-
-
+                sendCaseMessage("SUCCESS");
             }
 
             handler.postDelayed(runDownload, (12 * 1000));
+        }
+
+        private void sendCaseMessage(String messageType){
+            Message message = myHandler.obtainMessage();
+            Bundle bundle = message.getData();
+            bundle.putString("messageType", messageType);
+            message.setData(bundle);
+            myHandler.sendMessage(message);
         }
     }
 
@@ -146,7 +174,11 @@ public class DownloadService extends Service {
      * Download Backups
      * http://stackoverflow.com/questions/37601380/android-downloadmanager-backup-files-and-canceled-downloads
      *
-     * My Plam
+     * Send Data from background thread to ui thread
+     * http://androidshortnotes.blogspot.com/2013/02/thread-concept-in-android.html
+     * https://www.intertech.com/Blog/android-non-ui-to-ui-thread-communications-part-3-of-5/
+     *
+     * My Plan
      * Use binder to call methods on the service from the activity
      * Use an orderedbroadcast in case the download fails, any active activity should see this broadcast
      * and show an alert that the user can respond to through a call to the app
