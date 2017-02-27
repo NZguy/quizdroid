@@ -10,6 +10,7 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.io.IOException;
@@ -52,13 +53,23 @@ public class DownloadService extends Service {
                 Bundle bundle = msg.getData();
                 String messageType = bundle.getString("messageType");
                 if(messageType.compareTo("SUCCESS") == 0){
-                    // Success, send a notification
+                    // Success, send a notification and update the UI
                     Log.d(TAG, "Download Succeded");
+                    //TODO: tell the UI to update
+
                 }else if(messageType.compareTo("ERROR_BAD_URL") == 0){
                     // Failure, send an orderedbroadcast
+                    //TODO: send a broadcast that triggers an alert
                     Log.d(TAG, "Download Failed, bad url");
+                    Intent intent = new Intent("ALERT");
+                    intent.putExtra("messageType", messageType);
+                    //TODO: Make local broadcast work
+                    //LocalBroadcastManager.getInstance(DownloadService.this).sendBroadcast(intent);
+                    sendBroadcast(intent);
+
                 }else if(messageType.compareTo("ERROR_DOWNLOAD_FAIL") == 0){
                     // Failure, send an orderedbroadcast
+                    //TODO: send a broadcast that triggers an alert
                     Log.d(TAG, "Download Failed");
                 }
 
@@ -129,17 +140,18 @@ public class DownloadService extends Service {
                 myHandler.removeCallbacks(runDownload);
             }
 
-            if(data != null){
+            if(!data.isEmpty()){
                 // If we get here that means the data is good, an error would have thrown with a failed download
-                Log.d(TAG, "Response got ");
+                Log.d(TAG, "Response got " + data);
                 // Save the data to the file
+                // TODO: Save data to file
 
 
                 // Tell the app that we have finished
                 sendCaseMessage("SUCCESS");
             }
 
-            handler.postDelayed(runDownload, (12 * 1000));
+            handler.postDelayed(runDownload, (12 * 1000)); //TODO: Change this
         }
 
         private void sendCaseMessage(String messageType){
