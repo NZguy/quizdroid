@@ -1,17 +1,26 @@
 package edu.washington.drma.quizdroid;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.net.URL;
@@ -58,9 +67,12 @@ public class DownloadService extends Service {
                     //TODO: tell the UI to update
 
                 }else if(messageType.compareTo("ERROR_BAD_URL") == 0){
-                    // Failure, send an orderedbroadcast
-                    //TODO: send a broadcast that triggers an alert
-                    Log.d(TAG, "Download Failed, bad url");
+                    // Failure
+
+                    // Stop future downloads for now, will restart if user enters a new url
+                    handler.removeCallbacks(runDownload);
+
+                    // Alert the user of this
                     Intent intent = new Intent("ALERT");
                     intent.putExtra("messageType", messageType);
                     //TODO: Make local broadcast work
@@ -68,11 +80,16 @@ public class DownloadService extends Service {
                     sendBroadcast(intent);
 
                 }else if(messageType.compareTo("ERROR_DOWNLOAD_FAIL") == 0){
-                    // Failure, send an orderedbroadcast
-                    //TODO: send a broadcast that triggers an alert
-                    Log.d(TAG, "Download Failed");
-                }
+                    // Failure
 
+                    // Stop future downloads for now, will restart if user wants to
+                    handler.removeCallbacks(runDownload);
+
+                    // Alert the user
+                    Intent intent = new Intent("ALERT");
+                    intent.putExtra("messageType", messageType);
+                    sendBroadcast(intent);
+                }
             }
         };
 
@@ -96,16 +113,74 @@ public class DownloadService extends Service {
         Log.d(TAG, "set download url");
         this.downloadURL = downloadURL;
 
-        // Stops previous running of downloads and starts them again with the newest URL
-        if(runDownload == null){
-            runDownload = new DownloadFileRunnable(handler);
-        }
-        handler.removeCallbacks(runDownload);
-        handler.post(runDownload);
+        this.tryDownload();
     }
 
-    private void testMethod(){
+    public void tryDownload(){
+        // There many be a better way to do this checking but this works for now
 
+        // Check if airplane mode is on first
+        if(!isAirplaneModeOn(this.getApplicationContext())){
+
+            // Check if we are connected to the internet
+            if(isConnected()){
+
+                // Stops previous running of downloads and starts them again with the newest URL
+                if(runDownload == null){
+                    runDownload = new DownloadFileRunnable(handler);
+                }
+                handler.removeCallbacks(runDownload);
+                handler.post(runDownload);
+
+            }else{
+                // No connection, pop a toast
+                Toast toast = Toast.makeText(this.getApplicationContext(),
+                        "No internet connecton, can't download quiz",
+                        Toast.LENGTH_SHORT);
+                toast.show();
+            }
+
+        }else{
+            // Airplane mode is on alert the user
+            // Alert the user
+            Intent intent = new Intent("ALERT");
+            intent.putExtra("messageType", "ERROR_AIRPLANE_MODE_ON");
+            sendBroadcast(intent);
+
+        }
+
+        /**
+         * Would be nice to retry the download when connection comes back online, maybe have a
+         * retry button. Or to automatically retry.
+         */
+
+    }
+
+    @SuppressWarnings("deprecation")
+    private boolean isAirplaneModeOn(Context context) {
+        boolean isOn = false;
+
+        // Use different code depending on the api version
+        if(android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN){
+            isOn = Settings.System.getInt(context.getContentResolver(),
+                    Settings.System.AIRPLANE_MODE_ON, 0) != 0;
+        }else{
+            isOn = Settings.System.getInt(context.getContentResolver(),
+                    Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
+        }
+
+        return isOn;
+    }
+
+    private boolean isConnected(){
+        ConnectivityManager cm =
+                (ConnectivityManager)this.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        return isConnected;
     }
 
     // This is so much easier than an alarm manager, is this in another thread?
@@ -142,6 +217,7 @@ public class DownloadService extends Service {
 
             if(!data.isEmpty()){
                 // If we get here that means the data is good, an error would have thrown with a failed download
+                // Would need more validation for a final project
                 Log.d(TAG, "Response got " + data);
                 // Save the data to the file
                 // TODO: Save data to file
@@ -151,7 +227,7 @@ public class DownloadService extends Service {
                 sendCaseMessage("SUCCESS");
             }
 
-            handler.postDelayed(runDownload, (12 * 1000)); //TODO: Change this
+            handler.postDelayed(runDownload, (12 * 1000)); //TODO: Change this to longer value
         }
 
         private void sendCaseMessage(String messageType){

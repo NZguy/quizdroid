@@ -58,6 +58,10 @@ public class QuizApp extends Application {
         downloadService.setDownloadURL(downloadURL);
     }
 
+    public void tryDownload(){
+        downloadService.tryDownload();
+    }
+
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
