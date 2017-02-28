@@ -1,6 +1,7 @@
 package edu.washington.drma.quizdroid;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ public class PreferencesActivity extends AppCompatActivity {
 
     QuizApp app;
     EditText editURL;
+    AlertReciever alertReciever;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,16 @@ public class PreferencesActivity extends AppCompatActivity {
                 app.setDownloadURL(url);
             }
         });
+
+        // Register alert reciever
+        alertReciever = new AlertReciever(this);
+        registerReceiver(alertReciever, new IntentFilter("ALERT"));
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        unregisterReceiver(alertReciever);
     }
 
     @Override

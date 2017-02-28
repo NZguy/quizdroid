@@ -4,6 +4,7 @@ import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -24,6 +25,7 @@ public class QuizActivity extends AppCompatActivity
     private int topicIndex;
     private int questionIndex = 0; // The current question we are on
     //private int[] correctArray; // Tracks which questions the user got right
+    AlertReciever alertReciever;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,16 @@ public class QuizActivity extends AppCompatActivity
         tx.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left, 0, 0);
         tx.replace(R.id.fragment_placeholder, overview);
         tx.commit();
+
+        // Register alert reciever
+        alertReciever = new AlertReciever(this);
+        registerReceiver(alertReciever, new IntentFilter("ALERT"));
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        unregisterReceiver(alertReciever);
     }
 
     @Override

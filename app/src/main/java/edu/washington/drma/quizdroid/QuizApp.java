@@ -36,7 +36,7 @@ public class QuizApp extends Application {
 
         String filePath = getApplicationContext().getFilesDir() + "/questions.json";
         File questionsFile = new File(filePath);
-        instance = new DataRepository(questionsFile);
+        instance = new DataRepository(questionsFile, getApplicationContext());
 
         // /data/user/0/edu.washington.drma.quizdroid/files
         // Can't adb push to my device, no permission to
@@ -45,8 +45,8 @@ public class QuizApp extends Application {
         Intent intent = new Intent(this, DownloadService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
-        //defaultDownloadURL = "http://tednewardsandbox.site44.com/questions.json";
-        defaultDownloadURL = "lol";
+        defaultDownloadURL = "http://tednewardsandbox.site44.com/questions.json";
+        //defaultDownloadURL = "lol";
         String anotherURL = "https://raw.github.com/square/okhttp/master/README.md";
     }
 

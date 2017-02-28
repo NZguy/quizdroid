@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String QUIZ = "drma.quizIndex";
     private static final String TAG = "MainActivity";
     QuizApp app;
-    AlertReciever alertReciever1;
+    AlertReciever alertReciever;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,14 +59,14 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Register alert reciever
-        alertReciever1 = new AlertReciever(this);
-        registerReceiver(alertReciever1, new IntentFilter("ALERT"));
+        alertReciever = new AlertReciever(this);
+        registerReceiver(alertReciever, new IntentFilter("ALERT"));
     }
 
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        unregisterReceiver(alertReciever1);
+        unregisterReceiver(alertReciever);
     }
 
     @Override
@@ -92,89 +92,6 @@ public class MainActivity extends AppCompatActivity {
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    BroadcastReceiver alertReciever = new BroadcastReceiver(){
-        @Override
-        public void onReceive(Context context, Intent intent){
-            Log.d(TAG, "Broadcast Received");
-            Bundle bundle = intent.getExtras();
-            String messageType = bundle.getString("messageType");
-            //showAlert(messageType);
-        }
-    };
-
-    public void showAlert(String messageType){
-        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-
-        if(messageType.compareTo("ERROR_BAD_URL") == 0){
-            Log.d(TAG, "Download Failed, bad url");
-
-            // Display relevant dialog
-            alertDialog.setTitle("Bad URL");
-            alertDialog.setMessage("You entered an invalid URL, please change the URL in preferences");
-            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Ok", new DialogInterface.OnClickListener(){
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    // Do nothing, just close the dialog
-                    // Msybe take the user to the prefernces page when this happens
-                }
-            });
-
-        }else if(messageType.compareTo("ERROR_DOWNLOAD_FAIL") == 0){
-            Log.d(TAG, "Download Failed");
-
-            // Display relevant dialog
-            alertDialog.setTitle("Download Failed");
-            alertDialog.setMessage("Would you like to retry or quit the application and try again later?");
-            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Retry", new DialogInterface.OnClickListener(){
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Log.d(TAG, "Retrying download");
-                    app.tryDownload();
-                }
-            });
-            alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Quit", new DialogInterface.OnClickListener(){
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Log.d(TAG, "Quitting App");
-                    // This doesn't seem to kill the service, maybe stop the download service onPause
-                    MainActivity.this.finishAffinity();
-                }
-            });
-
-        }else if(messageType.compareTo("ERROR_AIRPLANE_MODE_ON") == 0){
-
-            Log.d(TAG, "Airoplane Mode On");
-
-            // Display relevant dialog
-            alertDialog.setTitle("Airplane Mode On");
-            alertDialog.setMessage("Would you like to turn off airplane mode and retry the download?");
-            alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener(){
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Log.d(TAG, "Going to settings");
-                    Intent intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
-                    startActivity(intent);
-                }
-            });
-            alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "No", new DialogInterface.OnClickListener(){
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Log.d(TAG, "No network detected");
-                    // No network can't download file, tell the user in a toast
-                    Toast toast = Toast.makeText(MainActivity.this.getApplicationContext(),
-                            "No internet connecton, can't download quiz",
-                            Toast.LENGTH_SHORT);
-                    toast.show();
-                }
-            });
-
-        }else{
-            Log.e(TAG, "An error with no type, this shouldn't happen");
-        }
-
-        alertDialog.show();
     }
 
     public class MyListener implements View.OnClickListener{

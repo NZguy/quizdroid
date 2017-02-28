@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 
@@ -62,9 +63,8 @@ public class DownloadService extends Service {
                 Bundle bundle = msg.getData();
                 String messageType = bundle.getString("messageType");
                 if(messageType.compareTo("SUCCESS") == 0){
-                    // Success, send a notification and update the UI
+                    // Success, send a notification, UI wull be updated by the repository
                     Log.d(TAG, "Download Succeded");
-                    //TODO: tell the UI to update
 
                 }else if(messageType.compareTo("ERROR_BAD_URL") == 0){
                     // Failure
@@ -218,13 +218,29 @@ public class DownloadService extends Service {
             if(!data.isEmpty()){
                 // If we get here that means the data is good, an error would have thrown with a failed download
                 // Would need more validation for a final project
-                Log.d(TAG, "Response got " + data);
+                Log.d(TAG, "Response got ");
                 // Save the data to the file
-                // TODO: Save data to file
+
+                try {
+                    // Put data in the right file
+                    FileOutputStream outputStream = openFileOutput("questions.json", Context.MODE_PRIVATE);
+                    // This line below makes a black filter cover the screen as if an alert were popped.
+                    // TODO: Fix the above error
+                    outputStream.write(data.getBytes());
+                    outputStream.close();
+
+                    // Make repository recreate its data
+                    QuizApp app = (QuizApp)getApplicationContext();
+                    app.getRepository().initializeData();
+
+                    // Tell the app that we have finished
+                    sendCaseMessage("SUCCESS");
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
 
-                // Tell the app that we have finished
-                sendCaseMessage("SUCCESS");
             }
 
             handler.postDelayed(runDownload, (12 * 1000)); //TODO: Change this to longer value

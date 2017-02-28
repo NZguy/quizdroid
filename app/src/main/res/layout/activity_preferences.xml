@@ -55,7 +55,7 @@
                 android:ems="10"
                 android:id="@+id/editURL"
                 android:layout_weight="1"
-                android:text="default URL" />
+                android:text="http://tednewardsandbox.site44.com/questions.json" />
         </LinearLayout>
 
         <LinearLayout

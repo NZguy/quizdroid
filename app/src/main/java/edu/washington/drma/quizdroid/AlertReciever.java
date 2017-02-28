@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 public class AlertReciever extends BroadcastReceiver {
@@ -94,6 +96,12 @@ public class AlertReciever extends BroadcastReceiver {
                     toast.show();
                 }
             });
+
+        }else if(messageType.compareTo("SUCCESS_REFRESH_UI") == 0){
+            Log.d(TAG, "Download success, reloading UI");
+
+            View view = activity.findViewById(R.id.activity_main);
+            view.invalidate();
 
         }else{
             Log.e(TAG, "An error with no type, this shouldn't happen");

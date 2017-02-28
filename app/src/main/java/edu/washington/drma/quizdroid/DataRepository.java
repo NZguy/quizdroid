@@ -3,6 +3,7 @@ package edu.washington.drma.quizdroid;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import org.json.*;
@@ -23,10 +24,12 @@ public class DataRepository{
 
     private ArrayList<Topic> topics;
     private Context context;
+    File questionsFile;
 
-    public DataRepository(File questionsFile){
+    public DataRepository(File questionsFile, Context context){
         this.context = context;
-        this.initializeData(questionsFile);
+        this.questionsFile = questionsFile;
+        this.initializeData();
         // How do I get access to context in a non activity class without app crashing, for some
         // reason context is null
 
@@ -43,7 +46,7 @@ public class DataRepository{
 //        Log.i("DataRepository", context.getFilesDir().getAbsolutePath());
     }
 
-    public void initializeData(File questionsFile) {
+    public void initializeData() {
         topics = new ArrayList<Topic>();
 //        topics.add(new Topic("Math", "descShort", "descLong", R.drawable.ic_action_name));
 //        topics.add(new Topic("Physics", "descShort", "descLong", R.drawable.ic_action_name));
@@ -80,6 +83,12 @@ public class DataRepository{
                             (jQuestion.getInt("answer") - 1)));
                 }
             }
+
+            // Alert the user that the data is ready
+            Intent intent = new Intent("ALERT");
+            intent.putExtra("messageType", "SUCCESS_REFRESH_UI");
+            context.sendBroadcast(intent);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
