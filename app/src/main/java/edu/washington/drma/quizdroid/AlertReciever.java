@@ -100,6 +100,13 @@ public class AlertReciever extends BroadcastReceiver {
         }else if(messageType.compareTo("SUCCESS_REFRESH_UI") == 0){
             Log.d(TAG, "Download success, reloading UI");
 
+            // Tell user
+            Toast successToast = Toast.makeText(activity.getApplicationContext(),
+                    "Downloading questions file",
+                    Toast.LENGTH_SHORT);
+            successToast.show();
+
+            // TODO: Fix UI reloading
             View view = activity.findViewById(R.id.activity_main);
             view.invalidate();
 

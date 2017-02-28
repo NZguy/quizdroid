@@ -39,7 +39,8 @@
         <service
             android:name=".DownloadService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"
+            android:stopWithTask="true"/>
 
         <!--<receiver android:name=".AlertReciever">-->
             <!--<intent-filter>-->

@@ -119,6 +119,12 @@ public class DownloadService extends Service {
     public void tryDownload(){
         // There many be a better way to do this checking but this works for now
 
+        // Tell user
+        Toast startToast = Toast.makeText(this.getApplicationContext(),
+                "Downloading questions file",
+                Toast.LENGTH_SHORT);
+        startToast.show();
+
         // Check if airplane mode is on first
         if(!isAirplaneModeOn(this.getApplicationContext())){
 
@@ -134,10 +140,10 @@ public class DownloadService extends Service {
 
             }else{
                 // No connection, pop a toast
-                Toast toast = Toast.makeText(this.getApplicationContext(),
+                Toast connectionToast = Toast.makeText(this.getApplicationContext(),
                         "No internet connecton, can't download quiz",
                         Toast.LENGTH_SHORT);
-                toast.show();
+                connectionToast.show();
             }
 
         }else{
